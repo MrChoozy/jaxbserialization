@@ -12,8 +12,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Person first = new Person("Aleg", new Date());
-        Person second = new Person("Ivgeny", new Date());
+        Person first = new Person("Aleg", new GregorianCalendar(2000, Calendar.JANUARY , 25).getTime());
+        Person second = new Person("Ivgeny", new GregorianCalendar(1985, Calendar.APRIL , 13).getTime());
         second.addHobby("fishing", 30);
         second.addHobby("coocing", 70);
 
@@ -40,10 +40,5 @@ public class Main {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d-MMMM-yyyy");
-        Calendar calendar = new GregorianCalendar(2017, Calendar.JANUARY , 25);
-        System.out.println(dateFormat.format(calendar.getTime()));
-
     }
 }
