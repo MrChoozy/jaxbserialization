@@ -3,6 +3,8 @@ package entity;
 
 import entity.adapters.DateAdapter;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -57,6 +59,8 @@ public class Person {
         this.birthday = date;
     }
 
+    @XmlElement(name = "hobby")
+    @XmlElementWrapper
     public List<Hobby> getHobbyes() {
         return hobbyes;
     }
