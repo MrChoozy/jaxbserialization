@@ -8,10 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class Main {
@@ -28,12 +25,10 @@ public class Main {
 
         String SQL_QUERY_PERSON = "INSERT INTO persons (name, birthday) VALUES (?, ?);";
         String SQL_QUERY_HOBBY = "INSERT INTO hobby (hobby_name, complexity, persons_id) VALUES (?, ?, ?);";
-        String SQL_QUERY_FIND = "select id from persons where name = ? and birthday = ?";
         File f = new File("test1.xml");
         try (Connection con = DataSource.getConnection();
-             PreparedStatement statmentPerson = con.prepareStatement( SQL_QUERY_PERSON );
-             PreparedStatement statmentHobby = con.prepareStatement( SQL_QUERY_HOBBY );
-             PreparedStatement statmentFindId = con.prepareStatement( SQL_QUERY_FIND);
+             PreparedStatement statmentPerson = con.prepareStatement( SQL_QUERY_PERSON  , Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement statmentHobby = con.prepareStatement( SQL_QUERY_HOBBY);
              BufferedReader br = new BufferedReader(new FileReader(f))){
 
             JAXBContext context = JAXBContext.newInstance(Persons.class);
@@ -59,16 +54,12 @@ public class Main {
                 statmentPerson.execute();
                 if(one.getHobbyes() != null){
                     for (Hobby hobby: one.getHobbyes()){
-                        statmentFindId.setString(1, one.getName());
-                        statmentFindId.setDate(2, convert(one.getBirthday()));
-                        ResultSet rs = statmentFindId.executeQuery();
-                        int id = 0;
-                        while (rs.next()){
-                            id = rs.getInt(1);
+                        ResultSet rs = statmentPerson.getGeneratedKeys();
+                        if(rs.next()){
+                            statmentHobby.setInt(3, rs.getInt(1));
                         }
                         statmentHobby.setString(1, hobby.getHobby_name());
                         statmentHobby.setInt(2, hobby.getComplexity());
-                        statmentHobby.setInt(3, id);
                         statmentHobby.execute();
                     }
                 }
